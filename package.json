@@ -1,0 +1,32 @@
+{
+	"name": "slackli",
+	"version": "1.0.0",
+	"description": "A basic command-line interface for aSlack",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/chad1008/slackli.git"
+	},
+	"bin": {
+		"slackli": "index.js"
+	},
+	"keywords": [
+		"slack",
+		"cli"
+	],
+	"author": "Chad Chadbourne",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/chad1008/slackli/issues"
+	},
+	"homepage": "https://github.com/chad1008/slackli#readme",
+	"dependencies": {
+		"@slack/bolt": "^3.7.0",
+		"chrono-node": "^2.3.2",
+		"colors": "^1.4.0"
+	},
+	"devDependencies": {
+		"@wordpress/prettier-config": "^1.1.1"
+	},
+	"prettier": "@wordpress/prettier-config"
+}
