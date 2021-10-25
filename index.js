@@ -7,11 +7,6 @@ const { findConversation, sendMessage } = require( './conversation' );
 
 const command = new Command( process.argv.slice( 2 ) );
 
-console.log( command );
-console.log( command.emoji );
-console.log( command.text );
-console.log( command.statusExpiration );
-
 const userArgs = process.argv.slice( 2 );
 const slackliMode = userArgs.shift();
 

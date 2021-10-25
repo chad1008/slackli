@@ -5,9 +5,18 @@ class Command {
 		this.mode = this.parseMode( this.data[ 0 ] );
 	}
 
+	get clearStatus() {
+		if ( this.mode === 'status' && this.data[ 1 ] === 'clear' ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	get emoji() {
-		if ( this.mode === 'status' ) {
-			let emojiString = this.data[ 1 ];
+		let emojiString = '';
+		if ( this.mode === 'status' && ! this.clearStatus ) {
+			emojiString = this.data[ 1 ];
 			const emojiStringLength = emojiString.length;
 			// Validate that the string begins and ends with a : character
 			emojiString =
@@ -18,14 +27,13 @@ class Command {
 				emojiString.charAt( emojiStringLength - 1 ) === ':'
 					? emojiString
 					: emojiString + ':';
-
-			return emojiString;
 		}
+		return emojiString;
 	}
 
 	get text() {
 		if ( this.mode === 'status' ) {
-			return this.data[ 2 ];
+			return ! this.clearStatus ? this.data[ 2 ] : '';
 		}
 	}
 
