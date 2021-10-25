@@ -1,8 +1,16 @@
 #!/usr/bin/env node
 const { App } = require( '@slack/bolt' );
+const { Command } = require( './command' );
 const { setStatus, setPresence } = require( './status' );
 const { setTitle } = require( './title' );
 const { findConversation, sendMessage } = require( './conversation' );
+
+const command = new Command( process.argv.slice( 2 ) );
+
+console.log( command );
+console.log( command.emoji );
+console.log( command.text );
+console.log( command.statusExpiration );
 
 const userArgs = process.argv.slice( 2 );
 const slackliMode = userArgs.shift();
@@ -26,7 +34,7 @@ if ( userArgs.includes( '--active' ) || userArgs.includes( '--away' ) ) {
 
 switch ( slackliMode ) {
 	case 'status':
-		setStatus( ...userArgs );
+		setStatus( command );
 		break;
 	case 'send':
 	case 'message':
