@@ -27,14 +27,12 @@ if ( userArgs.includes( '--active' ) || userArgs.includes( '--away' ) ) {
 	setPresence( declaredPresence );
 }
 
-switch ( slackliMode ) {
+switch ( command.mode ) {
 	case 'status':
 		setStatus( command );
 		break;
 	case 'send':
-	case 'message':
-	case 'm':
-		sendMessage( ...userArgs );
+		sendMessage( command );
 		break;
 	case 'away':
 		setPresence( 'away' );

@@ -34,26 +34,35 @@ class Command {
 	get text() {
 		if ( this.mode === 'status' ) {
 			return ! this.clearStatus ? this.data[ 2 ] : '';
+		} else if ( this.mode === 'send' ) {
+			return this.data[ 2 ];
+		} else {
+			return null;
 		}
 	}
 
 	get statusExpiration() {
 		if ( this.mode === 'status' ) {
 			return this.data.hasOwnProperty( 3 ) ? this.data[ 3 ] : 0;
+		} else {
+			return null;
 		}
 	}
 
+	get recipient() {
+		return this.mode === 'send' ? this.data[ 1 ] : null;
+	}
+
 	parseMode( mode ) {
-		const modeStrings = [
-			'status',
-			'send',
-			'message',
-			'm',
-			'away',
-			'active',
-			'title',
-		];
-		return modeStrings.includes( mode ) ? mode : undefined;
+		const sendModeStrings = [ 'send', 'message', 'm' ];
+		const otherModeStrings = [ 'status', 'away', 'active', 'title' ];
+		if ( sendModeStrings.includes( mode ) ) {
+			return 'send';
+		} else if ( otherModeStrings.includes( mode ) ) {
+			return mode;
+		} else {
+			return null;
+		}
 	}
 }
 
