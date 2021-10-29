@@ -25,6 +25,7 @@ custom.refiners.push( {
 			// If no explicit time was stated, default to 9AM (this aligns with Slack's existing defaults)
 			if ( ! result.start.isCertain( 'hour' ) ) {
 				result.start.assign( 'hour', 9 );
+				result.start.assign( 'minute', 0 );
 			}
 		} );
 		return results;
@@ -63,7 +64,7 @@ async function setStatus( command ) {
 			profile: {
 				status_text: command.text,
 				status_emoji: command.emoji,
-				status_expiration: parseExpiration( command.statusExpiration ),
+				status_expiration: parseExpiration( command.expiration ),
 			},
 		} );
 	} catch ( error ) {

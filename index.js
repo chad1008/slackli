@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-const { App } = require( '@slack/bolt' );
-const { Command } = require( './command' );
+const { SlackCommand } = require( './command' );
 const { setStatus, setPresence } = require( './status' );
 const { setTitle } = require( './title' );
 const { findConversation, sendMessage } = require( './conversation' );
 
-const command = new Command( process.argv.slice( 2 ) );
+const command = new SlackCommand( process.argv.slice( 2 ) );
+
+console.log( 'command:', command );
 
 const userArgs = process.argv.slice( 2 );
 const slackliMode = userArgs.shift();
