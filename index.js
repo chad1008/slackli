@@ -35,12 +35,8 @@ switch ( command.mode ) {
 	case 'send':
 		sendMessage( command );
 		break;
-	case 'away':
-		setPresence( 'away' );
-		break;
-	case 'active':
-	case 'auto':
-		setPresence( 'auto' );
+	case 'presence':
+		setPresence( command );
 		break;
 	case 'title':
 		setTitle( ...userArgs );

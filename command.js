@@ -15,9 +15,11 @@ class SlackCommand {
 				}
 				break;
 			case 'send':
-				console.log( 'send mode!' );
 				this.recipient = this.#parseRecipient( this.args[ 0 ] );
 				this.text = this.#parseText( this.args[ 1 ] );
+				break;
+			case 'presence':
+				this.presence = this.#parsePresence( this.args[ 0 ] );
 				break;
 		}
 	}
@@ -52,11 +54,26 @@ class SlackCommand {
 		return this.mode === 'send' ? recipient : null;
 	}
 
+	#parsePresence( presence ) {
+		if ( presence === 'away' ) {
+			return 'away';
+		} else if ( presence === 'active' || presence === 'auto' ) {
+			return 'auto';
+		} else {
+			return null;
+		}
+	}
+
 	#parseMode( mode ) {
 		const sendModeStrings = [ 'send', 'message', 'm' ];
-		const otherModeStrings = [ 'status', 'away', 'active', 'title' ];
+		const presenceStrings = [ 'away', 'active', 'auto' ];
+		const otherModeStrings = [ 'status', 'title' ];
 		if ( sendModeStrings.includes( mode ) ) {
 			return 'send';
+		} else if ( presenceStrings.includes( mode ) ) {
+			// For presence, we push the provided value back to the args array for parsing
+			this.args.push( mode );
+			return 'presence';
 		} else if ( otherModeStrings.includes( mode ) ) {
 			return mode;
 		} else {

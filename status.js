@@ -75,11 +75,11 @@ async function setStatus( command ) {
 	}
 }
 
-async function setPresence( presence ) {
+async function setPresence( command ) {
 	try {
 		const response = await app.client.users.setPresence( {
 			token: process.env.SLACK_USER_TOKEN,
-			presence: presence,
+			presence: command.presence,
 		} );
 	} catch ( error ) {
 		console.error(
