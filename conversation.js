@@ -28,6 +28,7 @@ async function findConversation( conversationName ) {
 	try {
 		const channelList = await app.client.conversations.list( {
 			token: process.env.SLACK_USER_TOKEN,
+			types: 'public_channel, private_channel',
 		} );
 		for ( const channel of channelList.channels ) {
 			if ( channel.name === conversationName ) {

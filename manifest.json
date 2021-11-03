@@ -11,6 +11,8 @@
 			"user": [
 				"chat:write",
 				"channels:read",
+				"groups:read",
+				"groups:write",
 				"users:write",
 				"users:read",
 				"users.profile:write"
