@@ -39,7 +39,7 @@ switch ( command.mode ) {
 		setPresence( command );
 		break;
 	case 'title':
-		setTitle( ...userArgs );
+		setTitle( command );
 		break;
 	default:
 		break;

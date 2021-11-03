@@ -7,12 +7,12 @@ const app = new App( {
 } );
 
 // Update user status using emoji and status text
-async function setTitle( title ) {
+async function setTitle( command ) {
 	try {
 		const response = await app.client.users.profile.set( {
 			token: process.env.SLACK_USER_TOKEN,
 			profile: {
-				title: title,
+				title: command.title,
 			},
 		} );
 	} catch ( error ) {

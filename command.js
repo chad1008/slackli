@@ -21,6 +21,9 @@ class SlackCommand {
 			case 'presence':
 				this.presence = this.#parsePresence( this.args[ 0 ] );
 				break;
+			case 'title':
+				this.title = this.args[ 0 ];
+				break;
 		}
 	}
 
