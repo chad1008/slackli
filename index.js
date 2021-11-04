@@ -6,28 +6,12 @@ const { findConversation, sendMessage } = require( './conversation' );
 
 const command = new SlackCommand( process.argv.slice( 2 ) );
 
-console.log( 'command:', command );
-
-const userArgs = process.argv.slice( 2 );
-const slackliMode = userArgs.shift();
-
-// Check for an --active or --away flag and note its position in the array
-if ( userArgs.includes( '--active' ) || userArgs.includes( '--away' ) ) {
-	let index = userArgs.findIndex(
-		( e ) => e === '--active' || e === '--away'
-	);
-
-	// Save desired presence to a variable, then strip it from the array
-	const declaredPresence = userArgs[ index ]
-		.replace( '--', '' )
-		.replace( 'active', 'auto' );
-
-	userArgs.splice( index, 1 );
-
-	// Set the desired status before continuing with the requested action
-	setPresence( declaredPresence );
+// Process any commands that may be accessed by a flag/option
+if ( command.hasOwnProperty( 'presence' ) ) {
+	setPresence( command );
 }
 
+// Process commands that require an explicit mode to be set
 switch ( command.mode ) {
 	case 'status':
 		setStatus( command );
@@ -35,12 +19,10 @@ switch ( command.mode ) {
 	case 'send':
 		sendMessage( command );
 		break;
-	case 'presence':
-		setPresence( command );
-		break;
 	case 'title':
 		setTitle( command );
 		break;
 	default:
+		console.log( "Sorry, I don't understand that request.".red );
 		break;
 }

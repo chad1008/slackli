@@ -3,6 +3,7 @@ class SlackCommand {
 	constructor( input ) {
 		this.args = input;
 		this.mode = this.#parseMode( this.args.shift() );
+		this.#parseOptions( input );
 		switch ( this.mode ) {
 			case 'status':
 				this.clearStatus = this.#clearStatus();
@@ -81,6 +82,34 @@ class SlackCommand {
 			return mode;
 		} else {
 			return null;
+		}
+	}
+
+	#parseOptions( input ) {
+		// move all arguments beginning with a double hyphen to a seprate array
+		const options = input
+			.filter( ( arg ) => arg.startsWith( '--' ) )
+			.map( ( arg ) => {
+				const option = arg.replace( '--', '' );
+				return option;
+			} );
+
+		// strip the hyphens
+		for ( const arg of input ) {
+			if ( arg.startsWith( '--' ) ) {
+				input.splice(
+					input.findIndex( ( e ) => e === arg ),
+					1
+				);
+			}
+		}
+
+		// process each option
+		for ( const option of options ) {
+			const presenceStrings = [ 'away', 'active', 'auto' ];
+			if ( presenceStrings.includes( option ) ) {
+				this.presence = this.#parsePresence( option );
+			}
 		}
 	}
 }
