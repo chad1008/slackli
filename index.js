@@ -1,48 +1,28 @@
 #!/usr/bin/env node
-const { App } = require( '@slack/bolt' );
+const { SlackCommand } = require( './command' );
 const { setStatus, setPresence } = require( './status' );
 const { setTitle } = require( './title' );
 const { findConversation, sendMessage } = require( './conversation' );
 
-const userArgs = process.argv.slice( 2 );
-const slackliMode = userArgs.shift();
+const command = new SlackCommand( process.argv.slice( 2 ) );
 
-// Check for an --active or --away flag and note its position in the array
-if ( userArgs.includes( '--active' ) || userArgs.includes( '--away' ) ) {
-	let index = userArgs.findIndex(
-		( e ) => e === '--active' || e === '--away'
-	);
-
-	// Save desired presence to a variable, then strip it from the array
-	const declaredPresence = userArgs[ index ]
-		.replace( '--', '' )
-		.replace( 'active', 'auto' );
-
-	userArgs.splice( index, 1 );
-
-	// Set the desired status before continuing with the requested action
-	setPresence( declaredPresence );
+// Process any commands that may be accessed by a flag/option
+if ( command.hasOwnProperty( 'presence' ) ) {
+	setPresence( command );
 }
 
-switch ( slackliMode ) {
+// Process commands that require an explicit mode to be set
+switch ( command.mode ) {
 	case 'status':
-		setStatus( ...userArgs );
+		setStatus( command );
 		break;
 	case 'send':
-	case 'message':
-	case 'm':
-		sendMessage( ...userArgs );
-		break;
-	case 'away':
-		setPresence( 'away' );
-		break;
-	case 'active':
-	case 'auto':
-		setPresence( 'auto' );
+		sendMessage( command );
 		break;
 	case 'title':
-		setTitle( ...userArgs );
+		setTitle( command );
 		break;
 	default:
+		console.log( "Sorry, I don't understand that request.".red );
 		break;
 }

@@ -25,6 +25,7 @@ custom.refiners.push( {
 			// If no explicit time was stated, default to 9AM (this aligns with Slack's existing defaults)
 			if ( ! result.start.isCertain( 'hour' ) ) {
 				result.start.assign( 'hour', 9 );
+				result.start.assign( 'minute', 0 );
 			}
 		} );
 		return results;
@@ -56,14 +57,14 @@ function parseExpiration( expiration ) {
 }
 
 // Update user status using emoji and status text
-async function setStatus( emoji, status, expiration = 0 ) {
+async function setStatus( command ) {
 	try {
 		const response = await app.client.users.profile.set( {
 			token: process.env.SLACK_USER_TOKEN,
 			profile: {
-				status_text: status,
-				status_emoji: emoji,
-				status_expiration: parseExpiration( expiration ),
+				status_text: command.text,
+				status_emoji: command.emoji,
+				status_expiration: parseExpiration( command.expiration ),
 			},
 		} );
 	} catch ( error ) {
@@ -74,11 +75,11 @@ async function setStatus( emoji, status, expiration = 0 ) {
 	}
 }
 
-async function setPresence( presence ) {
+async function setPresence( command ) {
 	try {
 		const response = await app.client.users.setPresence( {
 			token: process.env.SLACK_USER_TOKEN,
-			presence: presence,
+			presence: command.presence,
 		} );
 	} catch ( error ) {
 		console.error(

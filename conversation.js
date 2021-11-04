@@ -28,6 +28,7 @@ async function findConversation( conversationName ) {
 	try {
 		const channelList = await app.client.conversations.list( {
 			token: process.env.SLACK_USER_TOKEN,
+			types: 'public_channel, private_channel',
 		} );
 		for ( const channel of channelList.channels ) {
 			if ( channel.name === conversationName ) {
@@ -49,13 +50,13 @@ async function findConversation( conversationName ) {
 }
 
 // Post a message to a channel your app is in using ID and message text
-async function sendMessage( conversation, text ) {
-	const conversationId = await findConversation( conversation );
+async function sendMessage( command ) {
+	const conversationId = await findConversation( command.recipient );
 	try {
 		await app.client.chat.postMessage( {
 			token: process.env.SLACK_USER_TOKEN,
 			channel: conversationId,
-			text: text,
+			text: command.text,
 		} );
 	} catch ( error ) {
 		console.error( 'ERROR: ', error.data.error );
