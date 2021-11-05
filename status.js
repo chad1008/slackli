@@ -57,14 +57,14 @@ function parseExpiration( expiration ) {
 }
 
 // Update user status using emoji and status text
-async function setStatus( command ) {
+async function setStatus( emoji, text, expiration ) {
 	try {
 		const response = await app.client.users.profile.set( {
 			token: process.env.SLACK_USER_TOKEN,
 			profile: {
-				status_text: command.text,
-				status_emoji: command.emoji,
-				status_expiration: parseExpiration( command.expiration ),
+				status_text: text,
+				status_emoji: emoji,
+				status_expiration: parseExpiration( expiration ),
 			},
 		} );
 	} catch ( error ) {
@@ -75,11 +75,11 @@ async function setStatus( command ) {
 	}
 }
 
-async function setPresence( command ) {
+async function setPresence( presence ) {
 	try {
 		const response = await app.client.users.setPresence( {
 			token: process.env.SLACK_USER_TOKEN,
-			presence: command.presence,
+			presence: presence,
 		} );
 	} catch ( error ) {
 		console.error(

@@ -50,13 +50,13 @@ async function findConversation( conversationName ) {
 }
 
 // Post a message to a channel your app is in using ID and message text
-async function sendMessage( command ) {
-	const conversationId = await findConversation( command.recipient );
+async function sendMessage( recipient, text ) {
+	const conversationId = await findConversation( recipient );
 	try {
 		await app.client.chat.postMessage( {
 			token: process.env.SLACK_USER_TOKEN,
 			channel: conversationId,
-			text: command.text,
+			text: text,
 		} );
 	} catch ( error ) {
 		console.error( 'ERROR: ', error.data.error );

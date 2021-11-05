@@ -8,19 +8,19 @@ const command = new SlackCommand( process.argv.slice( 2 ) );
 
 // Process any commands that may be accessed by a flag/option
 if ( command.hasOwnProperty( 'presence' ) ) {
-	setPresence( command );
+	setPresence( command.presence );
 }
 
 // Process commands that require an explicit mode to be set
 switch ( command.mode ) {
 	case 'status':
-		setStatus( command );
+		setStatus( command.emoji, command.text, command.expiration );
 		break;
 	case 'send':
-		sendMessage( command );
+		sendMessage( command.recipient, command.text );
 		break;
 	case 'title':
-		setTitle( command );
+		setTitle( command.title );
 		break;
 	default:
 		console.log( "Sorry, I don't understand that request.".red );
