@@ -25,6 +25,11 @@ class SlackCommand {
 			case 'title':
 				this.title = this.args[ 0 ];
 				break;
+			case 'dnd':
+				if ( this.args.hasOwnProperty(0) ) {
+					this.expiration = this.args[0]
+				}
+				break;
 		}
 	}
 

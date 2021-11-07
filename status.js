@@ -89,4 +89,4 @@ async function setPresence( presence ) {
 	}
 }
 
-module.exports = { setStatus, setPresence };
+module.exports = { setStatus, setPresence, parseExpiration };

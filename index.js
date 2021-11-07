@@ -12,6 +12,8 @@ if ( command.hasOwnProperty( 'presence' ) ) {
 	setPresence( command.presence );
 }
 
+console.log(command);
+
 // Process commands that require an explicit mode to be set
 switch ( command.mode ) {
 	case 'status':
@@ -24,7 +26,7 @@ switch ( command.mode ) {
 		setTitle( command.title );
 		break;
 	case 'dnd':
-		setDND();
+		command.hasOwnProperty( 'expiration' ) ? setDND(command.expiration) : setDND();
 		break;
 	default:
 		console.log( "Sorry, I don't understand that request.".red );
