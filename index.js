@@ -3,6 +3,7 @@ const { SlackCommand } = require( './command' );
 const { setStatus, setPresence } = require( './status' );
 const { setTitle } = require( './title' );
 const { findConversation, sendMessage } = require( './conversation' );
+const { setDND } = require( './dnd.js' );
 
 const command = new SlackCommand( process.argv.slice( 2 ) );
 
@@ -21,6 +22,9 @@ switch ( command.mode ) {
 		break;
 	case 'title':
 		setTitle( command.title );
+		break;
+	case 'dnd':
+		setDND();
 		break;
 	default:
 		console.log( "Sorry, I don't understand that request.".red );

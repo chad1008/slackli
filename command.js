@@ -71,7 +71,7 @@ class SlackCommand {
 	#parseMode( mode ) {
 		const sendModeStrings = [ 'send', 'message', 'm' ];
 		const presenceStrings = [ 'away', 'active', 'auto' ];
-		const otherModeStrings = [ 'status', 'title' ];
+		const otherModeStrings = [ 'status', 'title', 'dnd' ];
 		if ( sendModeStrings.includes( mode ) ) {
 			return 'send';
 		} else if ( presenceStrings.includes( mode ) ) {
