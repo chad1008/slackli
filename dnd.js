@@ -7,24 +7,21 @@ const app = new App( {
 } );
 
 async function setDND( expiration = '30 minutes' ) {
-	const now = Math.floor( new Date().getTime() / 1000 );
-	const duration = Math.floor( ( parseExpiration( expiration ) - now ) / 60 );
-
-	const response = await app.client.dnd.setSnooze( {
-		token: process.env.SLACK_USER_TOKEN,
-		num_minutes: duration,
-	} );
-}
-
-async function toggleDND() {
 	const response = await app.client.dnd.info();
 	snoozeStatus = response.snooze_enabled;
 
-	if ( snoozeStatus === true ) {
-		await app.client.dnd.endSnooze();
+	if ( snoozeStatus === false ) {
+		const now = Math.floor( new Date().getTime() / 1000 );
+		const duration = Math.floor(
+			( parseExpiration( expiration ) - now ) / 60
+		);
+		await app.client.dnd.setSnooze( {
+			token: process.env.SLACK_USER_TOKEN,
+			num_minutes: duration,
+		} );
 	} else {
-		setDND();
+		await app.client.dnd.endSnooze();
 	}
 }
 
-module.exports = { setDND, toggleDND };
+module.exports = { setDND };

@@ -3,7 +3,7 @@ const { SlackCommand } = require( './command' );
 const { setStatus, setPresence } = require( './status' );
 const { setTitle } = require( './title' );
 const { findConversation, sendMessage } = require( './conversation' );
-const { setDND, toggleDND } = require( './dnd.js' );
+const { setDND } = require( './dnd.js' );
 
 const command = new SlackCommand( process.argv.slice( 2 ) );
 
@@ -13,7 +13,7 @@ if ( command.hasOwnProperty( 'presence' ) ) {
 }
 
 if ( command.toggleDND === true ) {
-	toggleDND();
+	setDND();
 }
 
 // Process commands that require an explicit mode to be set
