@@ -3,7 +3,6 @@ class SlackCommand {
 	constructor( input ) {
 		this.args = input;
 		this.mode = this.#parseMode( this.args.shift() );
-		this.#parseOptions( input );
 		switch ( this.mode ) {
 			case 'status':
 				this.clearStatus = this.#clearStatus();
@@ -26,11 +25,12 @@ class SlackCommand {
 				this.title = this.args[ 0 ];
 				break;
 			case 'dnd':
-				if ( this.args.hasOwnProperty(0) ) {
-					this.expiration = this.args[0]
+				if ( this.args.hasOwnProperty( 0 ) ) {
+					this.expiration = this.args[ 0 ];
 				}
 				break;
 		}
+		this.#parseOptions( input );
 	}
 
 	#clearStatus() {
@@ -114,6 +114,9 @@ class SlackCommand {
 			const presenceStrings = [ 'away', 'active', 'auto' ];
 			if ( presenceStrings.includes( option ) ) {
 				this.presence = this.#parsePresence( option );
+			}
+			if ( option === 'dnd' ) {
+				this.toggleDND = true;
 			}
 		}
 	}

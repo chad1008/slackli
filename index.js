@@ -3,7 +3,7 @@ const { SlackCommand } = require( './command' );
 const { setStatus, setPresence } = require( './status' );
 const { setTitle } = require( './title' );
 const { findConversation, sendMessage } = require( './conversation' );
-const { setDND } = require( './dnd.js' );
+const { setDND, toggleDND } = require( './dnd.js' );
 
 const command = new SlackCommand( process.argv.slice( 2 ) );
 
@@ -12,7 +12,9 @@ if ( command.hasOwnProperty( 'presence' ) ) {
 	setPresence( command.presence );
 }
 
-console.log(command);
+if ( command.toggleDND === true ) {
+	toggleDND();
+}
 
 // Process commands that require an explicit mode to be set
 switch ( command.mode ) {
@@ -26,7 +28,9 @@ switch ( command.mode ) {
 		setTitle( command.title );
 		break;
 	case 'dnd':
-		command.hasOwnProperty( 'expiration' ) ? setDND(command.expiration) : setDND();
+		command.hasOwnProperty( 'expiration' )
+			? setDND( command.expiration )
+			: setDND();
 		break;
 	default:
 		console.log( "Sorry, I don't understand that request.".red );
