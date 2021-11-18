@@ -1,6 +1,15 @@
 // The SlackCommand Class parses and organizes arguments passed in from the command line
 class SlackCommand {
+	#sendModeStrings;
+	#presenceStrings;
+	#dndStrings;
+	#otherModeStrings;
+
 	constructor( input ) {
+		this.#sendModeStrings = [ 'send', 'message', 'm' ];
+		this.#presenceStrings = [ 'away', 'active', 'auto' ];
+		this.#dndStrings = [ 'dnd', 'snooze' ];
+		this.#otherModeStrings = [ 'status', 'title' ];
 		this.args = input;
 		this.mode = this.#parseMode( this.args.shift() );
 		switch ( this.mode ) {
@@ -74,16 +83,15 @@ class SlackCommand {
 	}
 
 	#parseMode( mode ) {
-		const sendModeStrings = [ 'send', 'message', 'm' ];
-		const presenceStrings = [ 'away', 'active', 'auto' ];
-		const otherModeStrings = [ 'status', 'title', 'dnd' ];
-		if ( sendModeStrings.includes( mode ) ) {
+		if ( this.#sendModeStrings.includes( mode ) ) {
 			return 'send';
-		} else if ( presenceStrings.includes( mode ) ) {
+		} else if ( this.#presenceStrings.includes( mode ) ) {
 			// For presence, we push the provided value back to the args array for parsing
 			this.args.push( mode );
 			return 'presence';
-		} else if ( otherModeStrings.includes( mode ) ) {
+		} else if ( this.#dndStrings.includes( mode ) ) {
+			return 'dnd';
+		} else if ( this.#otherModeStrings.includes( mode ) ) {
 			return mode;
 		} else {
 			return null;
@@ -111,11 +119,10 @@ class SlackCommand {
 
 		// process each option
 		for ( const option of options ) {
-			const presenceStrings = [ 'away', 'active', 'auto' ];
-			if ( presenceStrings.includes( option ) ) {
+			if ( this.#presenceStrings.includes( option ) ) {
 				this.presence = this.#parsePresence( option );
 			}
-			if ( option === 'dnd' ) {
+			if ( this.#dndStrings.includes( option ) ) {
 				this.toggleDND = true;
 			}
 		}
