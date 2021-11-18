@@ -15,7 +15,9 @@
 				"groups:write",
 				"users:write",
 				"users:read",
-				"users.profile:write"
+				"users.profile:write",
+				"dnd:write",
+				"dnd:read"
 			]
 		}
 	},
