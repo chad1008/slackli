@@ -13,7 +13,7 @@ if ( command.hasOwnProperty( 'presence' ) ) {
 }
 
 if ( command.toggleDND === true ) {
-	setDND();
+	setDND( command.expiration );
 }
 
 // Process commands that require an explicit mode to be set
