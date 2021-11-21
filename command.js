@@ -12,6 +12,7 @@ class SlackCommand {
 		this.#otherModeStrings = [ 'status', 'title' ];
 		this.args = input;
 		this.mode = this.#parseMode( this.args.shift() );
+		this.#parseOptions( input );
 		switch ( this.mode ) {
 			case 'status':
 				this.clearStatus = this.#clearStatus();
@@ -39,7 +40,6 @@ class SlackCommand {
 				}
 				break;
 		}
-		this.#parseOptions( input );
 	}
 
 	#clearStatus() {
