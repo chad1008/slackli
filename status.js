@@ -1,5 +1,6 @@
 const { App } = require( '@slack/bolt' );
 const chrono = require( 'chrono-node' );
+// const { parseDate } = require( 'chrono-node/dist/locales/en' );
 const colors = require( 'colors' );
 
 const app = new App( {
@@ -33,11 +34,6 @@ custom.refiners.push( {
 } );
 
 function parseExpiration( expiration ) {
-	// If the expiration is '0' that means no value was provided, so we should return that zero back out again.
-	if ( expiration === 0 ) {
-		return 0;
-	}
-
 	// Get current timestamp for reference
 	const now = Date.now();
 
@@ -57,14 +53,27 @@ function parseExpiration( expiration ) {
 }
 
 // Update user status using emoji and status text
-async function setStatus( emoji, text, expiration ) {
+async function setStatus( emoji, text, expiration = null ) {
+	// If expiration is null, and text parses as a date string,
+	// use 'text' as the expiration and pass an empty 'text' string instead.
+	if (
+		expiration === null &&
+		chrono.parseDate( text, Date.now(), { forwardDate: true } ) !== null
+	) {
+		expiration = text;
+		text = '';
+	}
+	// Replace an empty expiration strin with null
+	expiration = expiration === '' ? null : expiration;
+
 	try {
 		const response = await app.client.users.profile.set( {
 			token: process.env.SLACK_USER_TOKEN,
 			profile: {
 				status_text: text,
 				status_emoji: emoji,
-				status_expiration: parseExpiration( expiration ),
+				status_expiration:
+					expiration === null ? 0 : parseExpiration( expiration ),
 			},
 		} );
 	} catch ( error ) {

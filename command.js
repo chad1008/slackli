@@ -21,7 +21,7 @@ class SlackCommand {
 					this.text = this.#parseText( this.args[ 1 ] );
 					this.expiration = this.args.hasOwnProperty( 2 )
 						? this.args[ 2 ]
-						: 0;
+						: null;
 				}
 				break;
 			case 'send':
