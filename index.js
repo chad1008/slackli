@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const { SlackCommand } = require( './command' );
-const { setStatus, setPresence } = require( './status' );
+const { setStatus, setPresence, clearStatus } = require( './status' );
 const { setTitle } = require( './title' );
 const { findConversation, sendMessage } = require( './conversation' );
 const { setDND } = require( './dnd.js' );
@@ -19,7 +19,11 @@ if ( command.toggleDND === true ) {
 // Process commands that require an explicit mode to be set
 switch ( command.mode ) {
 	case 'status':
-		setStatus( command.emoji, command.text, command.expiration );
+		if ( command.clearStatus ) {
+			clearStatus();
+		} else {
+			setStatus( command.emoji, command.text, command.expiration );
+		}
 		break;
 	case 'send':
 		sendMessage( command.recipient, command.text );

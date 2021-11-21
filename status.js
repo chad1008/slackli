@@ -75,6 +75,17 @@ async function setStatus( emoji, text, expiration ) {
 	}
 }
 
+async function clearStatus() {
+	await app.client.users.profile.set( {
+		token: process.env.SLACK_USER_TOKEN,
+		profile: {
+			status_text: '',
+			status_emoji: '',
+			status_expiration: '',
+		},
+	} );
+}
+
 async function setPresence( presence ) {
 	try {
 		const response = await app.client.users.setPresence( {
@@ -89,4 +100,4 @@ async function setPresence( presence ) {
 	}
 }
 
-module.exports = { setStatus, setPresence, parseExpiration };
+module.exports = { setStatus, setPresence, parseExpiration, clearStatus };
