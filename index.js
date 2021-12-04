@@ -8,7 +8,7 @@ const { setDND } = require( './dnd.js' );
 const command = new SlackCommand( process.argv.slice( 2 ) );
 
 // Process any commands that may be accessed by a flag/option
-if ( command.hasOwnProperty( 'presence' ) ) {
+if ( command.hasOwnProperty( 'presence' ) && command.mode !== 'presence' ) {
 	setPresence( command.presence );
 }
 
@@ -36,6 +36,10 @@ switch ( command.mode ) {
 			? setDND( command.expiration )
 			: setDND();
 		break;
+	case 'presence':
+		setPresence( command.presence );
+		break;
+
 	default:
 		console.log( "Sorry, I don't understand that request.".red );
 		break;
