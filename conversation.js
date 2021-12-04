@@ -1,6 +1,7 @@
-// Require the Bolt package (github.com/slackapi/bolt)
 const { App } = require( '@slack/bolt' );
+const fs = require( 'fs' );
 
+const userConfig = JSON.parse( fs.readFileSync( 'config.json' ) );
 const app = new App( {
 	token: process.env.SLACK_USER_TOKEN,
 	signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -9,7 +10,7 @@ const app = new App( {
 // Retrieve the unique ID of the requested contersation
 async function findConversation( conversationName ) {
 	let conversationId = null;
-	const limit = 500;
+	const limit = 1;
 	// Look for a channel with the name requested, limited to channels the user is already a member of
 	let channelCursor = '';
 	do {
@@ -39,22 +40,23 @@ async function findConversation( conversationName ) {
 	let userCursor = '';
 	let userBatchCounter = 1;
 	do {
-		// TODO: Tie the following in-progress messages to a config setting
 		// Initial in-progress message on the fourth batch
-		if ( userBatchCounter === 4 ) {
-			console.log(
-				`[${
-					userBatchCounter / 4
-				}] Searching for users named ${ conversationName }. This might take a while on larger teams...`
-			);
-		}
-		// Follow-up in-progress message every fourth batch
-		if ( userBatchCounter > 4 && userBatchCounter % 4 === 0 ) {
-			console.log(
-				`[${
-					userBatchCounter / 4
-				}] Still looking for ${ conversationName }. There are a lot of users here...`
-			);
+		if ( userConfig.findConversationProgress === true ) {
+			if ( userBatchCounter === 4 ) {
+				console.log(
+					`[${
+						userBatchCounter / 4
+					}] Searching for users named ${ conversationName }. This might take a while on larger teams...`
+				);
+			}
+			// Follow-up in-progress message every fourth batch
+			if ( userBatchCounter > 4 && userBatchCounter % 4 === 0 ) {
+				console.log(
+					`[${
+						userBatchCounter / 4
+					}] Still looking for ${ conversationName }. There are a lot of users here...`
+				);
+			}
 		}
 
 		try {

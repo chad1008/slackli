@@ -1,6 +1,8 @@
 const { App } = require( '@slack/bolt' );
 const parseExpiration = require( './status' ).parseExpiration;
+const fs = require( 'fs' );
 
+const userConfig = JSON.parse( fs.readFileSync( 'config.json' ) );
 const app = new App( {
 	token: process.env.SLACK_USER_TOKEN,
 	signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -13,7 +15,7 @@ async function setDND( expiration = '' ) {
 
 	// If snooze is currenly inactive and no expiration has been set, use a default expiration. Otherwise, use the provided value.
 	if ( snoozeStatus === false ) {
-		expiration = expiration === '' ? '30 min' : expiration; //TODO: make this default configurable
+		expiration = expiration === '' ? userConfig.defaultDND : expiration; //TODO: make this default configurable
 	}
 
 	// Calculate the duration in minutes from the current time
@@ -39,10 +41,3 @@ async function setDND( expiration = '' ) {
 }
 
 module.exports = { setDND };
-
-// if snooze is true
-// 		dnd with no expiration should toggle off
-//		dnd with expiration should just update the duration
-// if snooze is false
-//		dnd with no expiration should default to 30 minutes (eventually make that configuratble)
-//		dnd with expiration should activate for the defined duration
