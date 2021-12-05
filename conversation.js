@@ -7,6 +7,8 @@ const app = new App( {
 	signingSecret: process.env.SLACK_SIGNING_SECRET,
 } );
 
+//testing config modificaiton
+
 // Retrieve the unique ID of the requested contersation
 async function findConversation( conversationName ) {
 	let conversationId = null;
