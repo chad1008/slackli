@@ -1,9 +1,11 @@
 const fs = require( 'fs' );
-const { type } = require( 'os' );
+const path = require( 'path' );
 
-const configSample = fs.readFileSync( 'config.json.sample' );
+const configSample = fs.readFileSync(
+	path.join( __dirname, 'config.json.sample' )
+);
 const configSampleJSON = JSON.parse( configSample );
-const configPath = 'config.json';
+const configPath = path.join( __dirname, 'config.json' );
 
 function confirmOptionsAvail( config, sample ) {
 	// Loop through each element of the sample and add it if it's missing
@@ -55,4 +57,4 @@ function verifyConfig() {
 	} );
 }
 
-module.exports = { verifyConfig };
+module.exports = { configPath, verifyConfig };
