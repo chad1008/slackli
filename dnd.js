@@ -1,14 +1,17 @@
 const { App } = require( '@slack/bolt' );
 const parseExpiration = require( './status' ).parseExpiration;
 const fs = require( 'fs' );
+const { configPath, verifyConfig } = require( './manageConfig' );
 
-const userConfig = JSON.parse( fs.readFileSync( 'config.json' ) );
+const userConfig = JSON.parse( fs.readFileSync( configPath ) );
+
 const app = new App( {
 	token: process.env.SLACK_USER_TOKEN,
 	signingSecret: process.env.SLACK_SIGNING_SECRET,
 } );
 
 async function setDND( expiration = '' ) {
+	verifyConfig();
 	const now = Math.floor( new Date().getTime() / 1000 );
 	const currentStatus = await app.client.dnd.info();
 	snoozeStatus = currentStatus.snooze_enabled;
