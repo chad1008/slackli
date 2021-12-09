@@ -1,8 +1,6 @@
 const { App } = require( '@slack/bolt' );
-const fs = require( 'fs' );
-const { configPath, verifyConfig } = require( './manageConfig' );
+const { getUserConfig } = require( './manageConfig' );
 
-const userConfig = JSON.parse( fs.readFileSync( configPath ) );
 const app = new App( {
 	token: process.env.SLACK_USER_TOKEN,
 	signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -10,9 +8,10 @@ const app = new App( {
 
 // Retrieve the unique ID of the requested contersation
 async function findConversation( conversationName ) {
-	verifyConfig();
 	let conversationId = null;
 	const limit = 500;
+	const userConfig = await getUserConfig();
+
 	// Look for a channel with the name requested, limited to channels the user is already a member of
 	let channelCursor = '';
 	do {
@@ -93,7 +92,6 @@ async function findConversation( conversationName ) {
 
 // Post a message to a channel your app is in using ID and message text
 async function sendMessage( recipient, text ) {
-	verifyConfig();
 	const conversationId = await findConversation( recipient );
 	try {
 		await app.client.chat.postMessage( {

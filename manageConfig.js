@@ -1,4 +1,5 @@
 const fs = require( 'fs' );
+const { resolve } = require( 'path' );
 const path = require( 'path' );
 
 const configSample = fs.readFileSync(
@@ -23,38 +24,40 @@ function confirmOptionsAvail( config, sample ) {
 	}
 	return config;
 }
-
-function verifyConfig() {
-	// Generate a config file if one does not already exist
-	fs.writeFile( configPath, configSample, { flag: 'wx' }, ( error ) => {
-		if ( error ) {
-			// An error code of -17 means the file already exists, and we should confirm all values are present.
-			// All other errors should throw.
-			if ( error.errno === -17 ) {
-				// Confirm that all configSample elements are present, and add any that are missing
-				updatedConfig = confirmOptionsAvail(
-					JSON.parse( fs.readFileSync( configPath ) ),
-					configSampleJSON
-				);
-				// If any values needed updating, write the new config to the file
-				if (
-					updatedConfig !==
-					JSON.parse( fs.readFileSync( configPath ) )
-				) {
-					fs.writeFileSync(
-						configPath,
-						JSON.stringify( updatedConfig, null, 4 ),
-						{ flag: 'w' },
-						function ( err ) {
-							if ( err ) throw err;
-						}
+function getUserConfig() {
+	return new Promise( ( resolve ) => {
+		// Generate a config file if one does not already exist
+		fs.writeFile( configPath, configSample, { flag: 'wx' }, ( error ) => {
+			if ( error ) {
+				// An error code of -17 means the file already exists, and we should confirm all values are present.
+				// All other errors should throw.
+				if ( error.errno === -17 ) {
+					// Confirm that all configSample elements are present, and add any that are missing
+					updatedConfig = confirmOptionsAvail(
+						JSON.parse( fs.readFileSync( configPath ) ),
+						configSampleJSON
 					);
+					// If any values needed updating, write the new config to the file
+					if (
+						updatedConfig !==
+						JSON.parse( fs.readFileSync( configPath ) )
+					) {
+						fs.writeFileSync(
+							configPath,
+							JSON.stringify( updatedConfig, null, 4 ),
+							{ flag: 'w' },
+							function ( err ) {
+								if ( err ) throw err;
+							}
+						);
+					}
+					resolve( JSON.parse( fs.readFileSync( configPath ) ) );
+				} else {
+					throw error;
 				}
-			} else {
-				throw error;
 			}
-		}
+		} );
 	} );
 }
 
-module.exports = { configPath, verifyConfig };
+module.exports = { getUserConfig };

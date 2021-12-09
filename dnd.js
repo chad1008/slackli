@@ -1,9 +1,6 @@
 const { App } = require( '@slack/bolt' );
 const parseExpiration = require( './status' ).parseExpiration;
-const fs = require( 'fs' );
-const { configPath, verifyConfig } = require( './manageConfig' );
-
-const userConfig = JSON.parse( fs.readFileSync( configPath ) );
+const { getUserConfig } = require( './manageConfig' );
 
 const app = new App( {
 	token: process.env.SLACK_USER_TOKEN,
@@ -11,10 +8,10 @@ const app = new App( {
 } );
 
 async function setDND( expiration = '' ) {
-	verifyConfig();
 	const now = Math.floor( new Date().getTime() / 1000 );
 	const currentStatus = await app.client.dnd.info();
-	snoozeStatus = currentStatus.snooze_enabled;
+	const snoozeStatus = currentStatus.snooze_enabled;
+	const userConfig = await getUserConfig();
 
 	// If snooze is currenly inactive and no expiration has been set, use a default expiration. Otherwise, use the provided value.
 	if ( snoozeStatus === false ) {
