@@ -2,38 +2,58 @@ const { App } = require( '@slack/bolt' );
 const chrono = require( 'chrono-node' );
 // const { parseDate } = require( 'chrono-node/dist/locales/en' );
 const colors = require( 'colors' );
+const { getUserConfig } = require( './manageConfig' );
+
+async function getDefaultActionTime() {
+	const userConfig = await getUserConfig();
+	return {
+		hour: userConfig.defaultActionTime.hour,
+		minute: userConfig.defaultActionTime.minute,
+	};
+}
 
 const app = new App( {
 	token: process.env.SLACK_USER_TOKEN,
 	signingSecret: process.env.SLACK_SIGNING_SECRET,
 } );
 
-// Retrieve the current day of the week
-const currentDOW = new Date().getDay();
-// Customize chrono refiner to adjust results to our needs
-const custom = chrono.casual.clone();
-custom.refiners.push( {
-	refine: ( context, results ) => {
-		results.forEach( ( result ) => {
-			// If there's no explicitly stated time (by checking for an hour) and the day of the week matches today,
-			// Assume the user wants next week, and not later today
-			if (
-				! result.start.isCertain( 'hour' ) &&
-				result.start.date().getDay() === currentDOW
-			) {
-				result.start.assign( 'day', result.start.get( 'day' ) + 7 );
-			}
-			// If no explicit time was stated, default to 9AM (this aligns with Slack's existing defaults)
-			if ( ! result.start.isCertain( 'hour' ) ) {
-				result.start.assign( 'hour', 9 );
-				result.start.assign( 'minute', 0 );
-			}
-		} );
-		return results;
-	},
-} );
+async function setRefiners() {
+	const userConfig = await getUserConfig();
+	// Retrieve the current day of the week
+	const currentDOW = new Date().getDay();
+	// Customize chrono refiner to adjust results to our needs
+	const custom = chrono.casual.clone();
+	custom.refiners.push( {
+		refine: ( context, results ) => {
+			results.forEach( ( result ) => {
+				// If there's no explicitly stated time (by checking for an hour) and the day of the week matches today,
+				// Assume the user wants next week, and not later today
+				if (
+					! result.start.isCertain( 'hour' ) &&
+					result.start.date().getDay() === currentDOW
+				) {
+					result.start.assign( 'day', result.start.get( 'day' ) + 7 );
+				}
+				// If no explicit time was stated, default to 9AM (this aligns with Slack's existing defaults)
+				if ( ! result.start.isCertain( 'hour' ) ) {
+					result.start.assign(
+						'hour',
+						userConfig.defaultActionTime.hour
+					);
+					result.start.assign(
+						'minute',
+						userConfig.defaultActionTime.minute
+					);
+				}
+			} );
+			return results;
+		},
+	} );
+	return custom;
+}
 
-function parseExpiration( expiration ) {
+async function parseExpiration( expiration ) {
+	const custom = await setRefiners();
 	// Get current timestamp for reference
 	const now = Date.now();
 
@@ -73,7 +93,9 @@ async function setStatus( emoji, text, expiration = null ) {
 				status_text: text,
 				status_emoji: emoji,
 				status_expiration:
-					expiration === null ? 0 : parseExpiration( expiration ),
+					expiration === null
+						? 0
+						: await parseExpiration( expiration ),
 			},
 		} );
 	} catch ( error ) {

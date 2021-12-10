@@ -19,7 +19,9 @@ async function setDND( expiration = '' ) {
 	}
 
 	// Calculate the duration in minutes from the current time
-	const duration = Math.floor( ( parseExpiration( expiration ) - now ) / 60 );
+	const duration = Math.floor(
+		( ( await parseExpiration( expiration ) ) - now ) / 60
+	);
 
 	// Set or disable snooze
 	if ( snoozeStatus === false ) {
