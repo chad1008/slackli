@@ -1,13 +1,10 @@
-const { App } = require( '@slack/bolt' );
+const { getCreds, appSetup } = require( './utils' );
 const parseExpiration = require( './status' ).parseExpiration;
 const { getUserConfig } = require( './manageConfig' );
 
-const app = new App( {
-	token: process.env.SLACK_USER_TOKEN,
-	signingSecret: process.env.SLACK_SIGNING_SECRET,
-} );
-
 async function setDND( expiration = '' ) {
+	const app = await appSetup();
+	const creds = await getCreds();
 	const now = Math.floor( new Date().getTime() / 1000 );
 	const currentStatus = await app.client.dnd.info();
 	const snoozeStatus = currentStatus.snooze_enabled;
@@ -26,14 +23,14 @@ async function setDND( expiration = '' ) {
 	// Set or disable snooze
 	if ( snoozeStatus === false ) {
 		await app.client.dnd.setSnooze( {
-			token: process.env.SLACK_USER_TOKEN,
+			token: creds.token,
 			num_minutes: duration,
 		} );
 	} else {
 		// If snooze is currently active and an expiration was provided, apply that expiration. Otherwise, disable snooze.
 		if ( expiration !== '' ) {
 			await app.client.dnd.setSnooze( {
-				token: process.env.SLACK_USER_TOKEN,
+				token: creds.token,
 				num_minutes: duration,
 			} );
 		} else {

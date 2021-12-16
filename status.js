@@ -1,21 +1,7 @@
-const { App } = require( '@slack/bolt' );
+const { getCreds, appSetup } = require( './utils' );
 const chrono = require( 'chrono-node' );
-// const { parseDate } = require( 'chrono-node/dist/locales/en' );
 const colors = require( 'colors' );
 const { getUserConfig } = require( './manageConfig' );
-
-async function getDefaultActionTime() {
-	const userConfig = await getUserConfig();
-	return {
-		hour: userConfig.defaultActionTime.hour,
-		minute: userConfig.defaultActionTime.minute,
-	};
-}
-
-const app = new App( {
-	token: process.env.SLACK_USER_TOKEN,
-	signingSecret: process.env.SLACK_SIGNING_SECRET,
-} );
 
 async function setRefiners() {
 	const userConfig = await getUserConfig();
@@ -74,6 +60,8 @@ async function parseExpiration( expiration ) {
 
 // Update user status using emoji and status text
 async function setStatus( emoji, text, expiration = null ) {
+	const app = await appSetup();
+	const creds = await getCreds();
 	// If expiration is null, and text parses as a date string,
 	// use 'text' as the expiration and pass an empty 'text' string instead.
 	if (
@@ -87,8 +75,8 @@ async function setStatus( emoji, text, expiration = null ) {
 	expiration = expiration === '' ? null : expiration;
 
 	try {
-		const response = await app.client.users.profile.set( {
-			token: process.env.SLACK_USER_TOKEN,
+		await app.client.users.profile.set( {
+			token: creds.token,
 			profile: {
 				status_text: text,
 				status_emoji: emoji,
@@ -107,8 +95,10 @@ async function setStatus( emoji, text, expiration = null ) {
 }
 
 async function clearStatus() {
+	const app = await appSetup();
+	const creds = await getCreds();
 	await app.client.users.profile.set( {
-		token: process.env.SLACK_USER_TOKEN,
+		token: creds.token,
 		profile: {
 			status_text: '',
 			status_emoji: '',
@@ -118,9 +108,11 @@ async function clearStatus() {
 }
 
 async function setPresence( presence ) {
+	const app = await appSetup();
+	const creds = await getCreds();
 	try {
-		const response = await app.client.users.setPresence( {
-			token: process.env.SLACK_USER_TOKEN,
+		await app.client.users.setPresence( {
+			token: creds.token,
 			presence: presence,
 		} );
 	} catch ( error ) {

@@ -1,13 +1,11 @@
-const { App } = require( '@slack/bolt' );
+const { getCreds, appSetup } = require( './utils' );
 const { getUserConfig } = require( './manageConfig' );
-
-const app = new App( {
-	token: process.env.SLACK_USER_TOKEN,
-	signingSecret: process.env.SLACK_SIGNING_SECRET,
-} );
 
 // Retrieve the unique ID of the requested contersation
 async function findConversation( conversationName ) {
+	const app = await appSetup();
+	const creds = await getCreds();
+
 	let conversationId = null;
 	const limit = 500;
 	const userConfig = await getUserConfig();
@@ -17,7 +15,7 @@ async function findConversation( conversationName ) {
 	do {
 		try {
 			const channelList = await app.client.users.conversations( {
-				token: process.env.SLACK_USER_TOKEN,
+				token: creds.token,
 				types: 'public_channel, private_channel',
 				cursor: channelCursor,
 				limit: limit,
@@ -62,7 +60,7 @@ async function findConversation( conversationName ) {
 
 		try {
 			const userList = await app.client.users.list( {
-				token: process.env.SLACK_USER_TOKEN,
+				token: creds.token,
 				cursor: userCursor,
 				limit: limit,
 			} );
@@ -92,10 +90,12 @@ async function findConversation( conversationName ) {
 
 // Post a message to a channel your app is in using ID and message text
 async function sendMessage( recipient, text ) {
+	const app = await appSetup();
+	const creds = await getCreds();
 	const conversationId = await findConversation( recipient );
 	try {
 		await app.client.chat.postMessage( {
-			token: process.env.SLACK_USER_TOKEN,
+			token: creds.token,
 			channel: conversationId,
 			text: text,
 		} );

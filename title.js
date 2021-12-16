@@ -1,16 +1,13 @@
-const { App } = require( '@slack/bolt' );
+const { getCreds, appSetup } = require( './utils' );
 const colors = require( 'colors' );
-
-const app = new App( {
-	token: process.env.SLACK_USER_TOKEN,
-	signingSecret: process.env.SLACK_SIGNING_SECRET,
-} );
 
 // Update user status using emoji and status text
 async function setTitle( title ) {
+	const app = await appSetup();
+	const creds = await getCreds();
 	try {
-		const response = await app.client.users.profile.set( {
-			token: process.env.SLACK_USER_TOKEN,
+		await app.client.users.profile.set( {
+			token: creds.token,
 			profile: {
 				title: title,
 			},
