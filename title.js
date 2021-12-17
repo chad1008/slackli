@@ -3,8 +3,8 @@ const colors = require( 'colors' );
 
 // Update user status using emoji and status text
 async function setTitle( title ) {
-	const app = await appSetup();
 	const creds = await getCreds();
+	const app = await appSetup( creds );
 	try {
 		await app.client.users.profile.set( {
 			token: creds.token,

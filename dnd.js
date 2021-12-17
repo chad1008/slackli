@@ -3,8 +3,8 @@ const parseExpiration = require( './status' ).parseExpiration;
 const { getUserConfig } = require( './manageConfig' );
 
 async function setDND( expiration = '' ) {
-	const app = await appSetup();
 	const creds = await getCreds();
+	const app = await appSetup( creds );
 	const now = Math.floor( new Date().getTime() / 1000 );
 	const currentStatus = await app.client.dnd.info();
 	const snoozeStatus = currentStatus.snooze_enabled;

@@ -60,8 +60,8 @@ async function parseExpiration( expiration ) {
 
 // Update user status using emoji and status text
 async function setStatus( emoji, text, expiration = null ) {
-	const app = await appSetup();
 	const creds = await getCreds();
+	const app = await appSetup( creds );
 	// If expiration is null, and text parses as a date string,
 	// use 'text' as the expiration and pass an empty 'text' string instead.
 	if (
@@ -95,8 +95,8 @@ async function setStatus( emoji, text, expiration = null ) {
 }
 
 async function clearStatus() {
-	const app = await appSetup();
 	const creds = await getCreds();
+	const app = await appSetup( creds );
 	await app.client.users.profile.set( {
 		token: creds.token,
 		profile: {
@@ -108,8 +108,8 @@ async function clearStatus() {
 }
 
 async function setPresence( presence ) {
-	const app = await appSetup();
 	const creds = await getCreds();
+	const app = await appSetup( creds );
 	try {
 		await app.client.users.setPresence( {
 			token: creds.token,

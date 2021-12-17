@@ -1,4 +1,6 @@
 // The SlackCommand Class parses and organizes arguments passed in from the command line
+const { getUserConfig } = require( './manageConfig' );
+
 class SlackCommand {
 	#modeStrings = {
 		send: [ 'send', 'message', 'm' ],
@@ -11,6 +13,12 @@ class SlackCommand {
 		this.args = input;
 		this.mode = this.#parseMode( this.args.shift() );
 		this.#parseOptions( input );
+	}
+
+	// Allow for asynchronous reading of config.json. Workspace is determined first,
+	// which includes mutating the args array if needed. Then the rest of the command is parsed.
+	async init( callback ) {
+		this.workspace = await this.#setWorkspace( this.args[ 0 ] );
 		switch ( this.mode ) {
 			case 'status':
 				this.clearStatus = this.#clearStatus();
@@ -38,6 +46,8 @@ class SlackCommand {
 				}
 				break;
 		}
+
+		callback.bind( this )();
 	}
 
 	#clearStatus() {
@@ -123,6 +133,19 @@ class SlackCommand {
 			if ( this.#modeStrings.dnd.includes( option ) ) {
 				this.toggleDND = true;
 			}
+		}
+	}
+
+	async #setWorkspace( arg ) {
+		const userConfig = await getUserConfig();
+		// If the provided argument matches any of the keys in the the user's saved workspaces,
+		// remove the arg and from the array and return it as the selected workspace.
+		// Otherwise, use the defined default workspace.
+		if ( Object.keys( userConfig.workspaces ).includes( arg ) ) {
+			this.args.splice( this.args.indexOf( arg ), 1 );
+			return arg;
+		} else {
+			return userConfig.workspaces.default;
 		}
 	}
 }

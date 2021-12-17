@@ -10,8 +10,7 @@ async function getCreds() {
 	};
 }
 
-async function appSetup() {
-	const creds = await getCreds();
+async function appSetup( creds ) {
 	return new App( {
 		token: creds.token,
 		signingSecret: creds.secret,
