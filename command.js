@@ -11,14 +11,15 @@ class SlackCommand {
 
 	constructor( input ) {
 		this.args = input;
-		this.mode = this.#parseMode( this.args.shift() );
 		this.#parseOptions( input );
 	}
 
 	// Allow for asynchronous reading of config.json. Workspace is determined first,
 	// which includes mutating the args array if needed. Then the rest of the command is parsed.
 	async init( callback ) {
+		this.mode = this.#parseMode( this.args.shift() );
 		this.workspace = await this.#setWorkspace( this.args[ 0 ] );
+
 		switch ( this.mode ) {
 			case 'status':
 				this.clearStatus = this.#clearStatus();
@@ -114,8 +115,7 @@ class SlackCommand {
 				const option = arg.replace( '--', '' );
 				return option;
 			} );
-
-		// strip the hyphens
+		// remove options from the input array
 		for ( const arg of input ) {
 			if ( arg.startsWith( '--' ) ) {
 				input.splice(

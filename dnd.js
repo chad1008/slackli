@@ -2,8 +2,8 @@ const { getCreds, appSetup } = require( './utils' );
 const parseExpiration = require( './status' ).parseExpiration;
 const { getUserConfig } = require( './manageConfig' );
 
-async function setDND( expiration = '' ) {
-	const creds = await getCreds();
+async function setDND( workspace, expiration = '' ) {
+	const creds = await getCreds( workspace );
 	const app = await appSetup( creds );
 	const now = Math.floor( new Date().getTime() / 1000 );
 	const currentStatus = await app.client.dnd.info();

@@ -2,8 +2,8 @@ const { getCreds, appSetup } = require( './utils' );
 const { getUserConfig } = require( './manageConfig' );
 
 // Retrieve the unique ID of the requested contersation
-async function findConversation( conversationName ) {
-	const creds = await getCreds();
+async function findConversation( workspace, conversationName ) {
+	const creds = await getCreds( workspace );
 	const app = await appSetup( creds );
 	let conversationId = null;
 	const limit = 500;
@@ -88,10 +88,10 @@ async function findConversation( conversationName ) {
 }
 
 // Post a message to a channel your app is in using ID and message text
-async function sendMessage( recipient, text ) {
-	const creds = await getCreds();
+async function sendMessage( workspace, recipient, text ) {
+	const creds = await getCreds( workspace );
 	const app = await appSetup( creds );
-	const conversationId = await findConversation( recipient );
+	const conversationId = await findConversation( workspace, recipient );
 	try {
 		await app.client.chat.postMessage( {
 			token: creds.token,

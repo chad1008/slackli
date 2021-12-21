@@ -1,9 +1,11 @@
 const { App } = require( '@slack/bolt' );
 const { getUserConfig } = require( './manageConfig' );
 
-async function getCreds() {
+async function getCreds( workspace ) {
 	const userConfig = await getUserConfig();
-	const targetWorkspace = userConfig.workspaces.default;
+	const targetWorkspace = workspace
+		? workspace
+		: userConfig.workspaces.default;
 	return {
 		token: userConfig.workspaces[ targetWorkspace ].userToken,
 		secret: userConfig.workspaces[ targetWorkspace ].signingSecret,

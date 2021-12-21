@@ -9,35 +9,40 @@ const command = new SlackCommand( process.argv.slice( 2 ) );
 command.init( () => {
 	// Process any commands that may be accessed by a flag/option
 	if ( command.hasOwnProperty( 'presence' ) && command.mode !== 'presence' ) {
-		setPresence( command.presence );
+		setPresence( command.workspace, command.presence );
 	}
 
 	if ( command.toggleDND === true ) {
-		setDND( command.expiration );
+		setDND( command.workspace, command.expiration );
 	}
 
 	// Process commands that require an explicit mode to be set
 	switch ( command.mode ) {
 		case 'status':
 			if ( command.clearStatus ) {
-				clearStatus();
+				clearStatus( command.workspace );
 			} else {
-				setStatus( command.emoji, command.text, command.expiration );
+				setStatus(
+					command.workspace,
+					command.emoji,
+					command.text,
+					command.expiration
+				);
 			}
 			break;
 		case 'send':
-			sendMessage( command.recipient, command.text );
+			sendMessage( command.workspace, command.recipient, command.text );
 			break;
 		case 'title':
-			setTitle( command.title );
+			setTitle( command.workspace, command.title );
 			break;
 		case 'dnd':
 			command.hasOwnProperty( 'expiration' )
-				? setDND( command.expiration )
-				: setDND();
+				? setDND( command.workspace, command.expiration )
+				: setDND( command.workspace );
 			break;
 		case 'presence':
-			setPresence( command.presence );
+			setPresence( command.workspace, command.presence );
 			break;
 
 		default:
