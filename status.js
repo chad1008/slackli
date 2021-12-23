@@ -59,31 +59,39 @@ async function parseExpiration( expiration ) {
 }
 
 // Update user status using emoji and status text
-async function setStatus( workspace, emoji, text, expiration = null ) {
-	const creds = await getCreds( workspace );
-	const app = await appSetup( creds );
+// @param args Object    workspace     String (optional) default = ''
+//						 emoji		   String (optional)
+//						 text		   String (optinoal)
+//						 expiration	   String (optional) default = null
+async function setStatus( args ) {
+	let defaults = { workspace: '', expiration: null };
+	args = { ...defaults, ...args };
+	// Replace an empty expiration string with null
+	args.expiration = args.expiration === '' ? null : args.expiration;
 	// If expiration is null, and text parses as a date string,
 	// use 'text' as the expiration and pass an empty 'text' string instead.
 	if (
-		expiration === null &&
-		chrono.parseDate( text, Date.now(), { forwardDate: true } ) !== null
+		args.expiration === null &&
+		chrono.parseDate( args.text, Date.now(), { forwardDate: true } ) !==
+			null
 	) {
-		expiration = text;
-		text = '';
+		args.expiration = args.text;
+		args.text = '';
 	}
-	// Replace an empty expiration string with null
-	expiration = expiration === '' ? null : expiration;
+
+	const creds = await getCreds( args.workspace );
+	const app = await appSetup( creds );
 
 	try {
 		await app.client.users.profile.set( {
 			token: creds.token,
 			profile: {
-				status_text: text,
-				status_emoji: emoji,
+				status_text: args.text,
+				status_emoji: args.emoji,
 				status_expiration:
-					expiration === null
+					args.expiration === null
 						? 0
-						: await parseExpiration( expiration ),
+						: await parseExpiration( args.expiration ),
 			},
 		} );
 	} catch ( error ) {

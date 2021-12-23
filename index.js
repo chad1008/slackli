@@ -19,16 +19,15 @@ command.init( () => {
 	// Process commands that require an explicit mode to be set
 	switch ( command.mode ) {
 		case 'status':
-			if ( command.clearStatus ) {
-				clearStatus( command.workspace );
-			} else {
-				setStatus(
-					command.workspace,
-					command.emoji,
-					command.text,
-					command.expiration
-				);
-			}
+			args = {
+				workspace: command.workspace,
+				emoji: command.emoji,
+				text: command.text,
+				expiration: command.expiration,
+			};
+			command.clearStatus
+				? clearStatus( command.workspace )
+				: setStatus( args );
 			break;
 		case 'send':
 			sendMessage( command.workspace, command.recipient, command.text );
