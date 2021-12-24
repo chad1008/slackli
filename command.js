@@ -36,7 +36,7 @@ class SlackCommand {
 				this.text = this.#parseText( this.args[ 1 ] );
 				break;
 			case 'presence':
-				this.presence = this.#parsePresence( this.args[ 0 ] );
+				this.presence = this.args[ 0 ];
 				break;
 			case 'title':
 				this.title = this.args[ 0 ];
@@ -81,16 +81,6 @@ class SlackCommand {
 		return this.mode === 'send' ? recipient : null;
 	}
 
-	#parsePresence( presence ) {
-		if ( presence === 'away' ) {
-			return 'away';
-		} else if ( presence === 'active' || presence === 'auto' ) {
-			return 'auto';
-		} else {
-			return null;
-		}
-	}
-
 	#parseMode( mode ) {
 		if ( this.#modeStrings.send.includes( mode ) ) {
 			return 'send';
@@ -128,7 +118,7 @@ class SlackCommand {
 		// process each option
 		for ( const option of options ) {
 			if ( this.#modeStrings.presence.includes( option ) ) {
-				this.presence = this.#parsePresence( option );
+				this.presence = option;
 			}
 			if ( this.#modeStrings.dnd.includes( option ) ) {
 				this.toggleDND = true;

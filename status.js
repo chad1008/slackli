@@ -116,6 +116,13 @@ async function clearStatus( workspace ) {
 }
 
 async function setPresence( workspace, presence ) {
+	if ( arguments.length === 1 ) {
+		presence = workspace;
+		workspace = '';
+	}
+	if ( presence === 'active' ) {
+		presence = 'auto';
+	}
 	const creds = await getCreds( workspace );
 	const app = await appSetup( creds );
 	try {
