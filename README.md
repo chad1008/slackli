@@ -27,17 +27,24 @@ Next, visit https://api.slack.com/apps and click the button to create a new app.
 Switch to the JSON tab and replace the demo content by pasting in your `manifest.json` content. Review the summary, click 'Create,' and you'll have a brand new Slack app ready to install.
 
 **Step 3:** Install and authenticate your app  
-Slackli will need two pieces of authentication data. First, after creating your app, scroll down and copy the **Signing Secret**. Save that secret as an environment variable in your local shell:
-
-`export SLACK_SIGNING_SECRET='abcdefghij1234567890'`
+Slackli will need two pieces of authentication data. First, after creating your app, scroll down and copy the **Signing Secret**. Save that secret, you'll use it later.
 
 Next, go ahead and install your app. Back on the page where you grabbed the signing secret, look for the option to Install App in the left hand sidebar. Proceed through the installation flow, and then copy the **User OAuth Token** that's presented.
 
-Set this key as another environment variable in your local shell:
+Now that you have an auth token and signing secret, you can save them to Slackli's config. I'll automate this stip in the future, but for now:
 
-`export SLACK_USER_TOKEN='xoxp-xxxxxxxxxx-xxxxxxxxxx-xxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'`
+1. copy `config.json.sample` and rename the copy as just `config.json`
+2. in the `workspaces` object, add your workspace like so:
+```
+"workspaceName": {
+    "userToken": "xoxp-1234567890-111111111111-22222222222222-123abc123abc123abc123abc",
+    "signingSecret": "123abc123abc123abc123abc"
+}
+```
 
-To avoid having to re-export these whenever you launch a new shell, you can add the two export commands to `~/.bashrc` or `~/.zshrc`, or any other file your shell sources upon launch.
+Just replace `workspaceName` with a nickname for your workspace (I recommend a single word if possible, otherwise you'll need to add quotes when you use it). You'll also want to update `workspaces.default` to the name of your main workspace, then you won't need to type that name for each command.
+
+You can add as many workspaces as you like. If don't provide a workspace name in terminal commands the default will be used. If you want to interact with a different workspace, you can pass its name as the first argument of any command, before any other arguments.
 
 ## Usage
 
