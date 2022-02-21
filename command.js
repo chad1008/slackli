@@ -17,8 +17,8 @@ class SlackCommand {
 	// Allow for asynchronous reading of config.json. Workspace is determined first,
 	// which includes mutating the args array if needed. Then the rest of the command is parsed.
 	async init( callback ) {
-		this.mode = this.#parseMode( this.args.shift() );
 		this.workspace = await this.#setWorkspace( this.args[ 0 ] );
+		this.mode = this.#parseMode( this.args.shift() );
 
 		switch ( this.mode ) {
 			case 'status':
