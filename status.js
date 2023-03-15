@@ -1,4 +1,4 @@
-const { getCreds, appSetup } = require( './utils' );
+const { getCreds, appSetup, getUserId } = require( './utils' );
 const chrono = require( 'chrono-node' );
 const colors = require( 'colors' );
 const { getUserConfig } = require( './manageConfig' );
@@ -138,4 +138,25 @@ async function setPresence( workspace, presence ) {
 	}
 }
 
-module.exports = { setStatus, setPresence, parseExpiration, clearStatus };
+async function getStatus( workspace, userName ) {
+	const creds = await getCreds( workspace );
+	const app = await appSetup( creds );
+	const result = await app.client.users.profile.get( {
+		token: creds.token,
+		user: await getUserId( workspace, userName ),
+	} );
+	const status = {
+		emoji: result.profile.status_emoji,
+		text: result.profile.status_text,
+	};
+	console.log( JSON.stringify( status ) );
+	return status;
+}
+
+module.exports = {
+	setStatus,
+	setPresence,
+	parseExpiration,
+	clearStatus,
+	getStatus,
+};

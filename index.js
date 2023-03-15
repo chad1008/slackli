@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 const { SlackCommand } = require( './command' );
-const { setStatus, setPresence, clearStatus } = require( './status' );
+const {
+	setStatus,
+	setPresence,
+	clearStatus,
+	getStatus,
+} = require( './status' );
 const { setTitle } = require( './title' );
 const { findConversation, sendMessage } = require( './conversation' );
 const { setDND } = require( './dnd.js' );
@@ -28,6 +33,9 @@ command.init( () => {
 			command.clearStatus
 				? clearStatus( command.workspace )
 				: setStatus( args );
+			break;
+		case 'getStatus':
+			getStatus( command.workspace, command.username );
 			break;
 		case 'send':
 			sendMessage( command.workspace, command.recipient, command.text );

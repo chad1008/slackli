@@ -55,7 +55,6 @@ async function getUserId( workspace, userName ) {
 			} );
 			for ( const user of userList.members ) {
 				if ( user.name === userName ) {
-					console.log( 'returning the user id', user.id );
 					conversationId = user.id;
 					return conversationId;
 				}

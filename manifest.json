@@ -16,6 +16,7 @@
 				"users:write",
 				"users:read",
 				"users.profile:write",
+				"users.profile:read",
 				"dnd:write",
 				"dnd:read"
 			]

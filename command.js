@@ -6,7 +6,7 @@ class SlackCommand {
 		send: [ 'send', 'message', 'm' ],
 		presence: [ 'away', 'active', 'auto' ],
 		dnd: [ 'dnd', 'snooze' ],
-		other: [ 'status', 'title' ],
+		other: [ 'status', 'getStatus', 'title' ],
 	};
 
 	constructor( input ) {
@@ -29,6 +29,11 @@ class SlackCommand {
 					this.expiration = this.args.hasOwnProperty( 2 )
 						? this.args[ 2 ]
 						: null;
+				}
+				break;
+			case 'getStatus':
+				if ( this.args.length === 1 ) {
+					this.username = this.args[ 0 ];
 				}
 				break;
 			case 'send':
