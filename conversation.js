@@ -1,5 +1,6 @@
 const { getCreds, appSetup } = require( './utils' );
 const { getUserConfig } = require( './manageConfig' );
+const { getUserId } = require( './utils.js' );
 
 // Retrieve the unique ID of the requested contersation
 async function findConversation( workspace, conversationName ) {
@@ -35,49 +36,10 @@ async function findConversation( workspace, conversationName ) {
 		}
 	} while ( channelCursor !== '' );
 	// Since we didn't return a matching channel, search for matching usernames
-	let userCursor = '';
-	let userBatchCounter = 1;
-	do {
-		// Initial in-progress message on the fourth batch
-		if ( userConfig.findConversationProgress === true ) {
-			if ( userBatchCounter === 4 ) {
-				console.log(
-					`[${
-						userBatchCounter / 4
-					}] Searching for users named ${ conversationName }. This might take a while on larger teams...`
-				);
-			}
-			// Follow-up in-progress message every fourth batch
-			if ( userBatchCounter > 4 && userBatchCounter % 4 === 0 ) {
-				console.log(
-					`[${
-						userBatchCounter / 4
-					}] Still looking for ${ conversationName }. There are a lot of users here...`
-				);
-			}
-		}
-
-		try {
-			const userList = await app.client.users.list( {
-				token: creds.token,
-				cursor: userCursor,
-				limit: limit,
-			} );
-			for ( const user of userList.members ) {
-				if ( user.name === conversationName ) {
-					conversationId = user.id;
-					return conversationId;
-				}
-			}
-			userCursor =
-				userList.response_metadata.next_cursor !== ''
-					? userList.response_metadata.next_cursor
-					: '';
-			userBatchCounter++;
-		} catch ( error ) {
-			console.error( error );
-		}
-	} while ( userCursor !== '' );
+	conversationId = await getUserId( workspace, conversationName );
+	if ( conversationId !== null ) {
+		return conversationId;
+	}
 	if ( conversationId === null ) {
 		// If conversationID is still null, output an error
 		console.log(
