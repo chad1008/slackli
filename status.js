@@ -78,6 +78,8 @@ async function setStatus( args ) {
 		args.expiration = args.text;
 		args.text = '';
 	}
+	// Replace 'never' expiration string with null
+	args.expiration = args.expiration === 'never' ? null : args.expiration;
 
 	const creds = await getCreds( args.workspace );
 	const app = await appSetup( creds );
@@ -105,14 +107,25 @@ async function setStatus( args ) {
 async function clearStatus( workspace ) {
 	const creds = await getCreds( workspace );
 	const app = await appSetup( creds );
-	await app.client.users.profile.set( {
-		token: creds.token,
-		profile: {
-			status_text: '',
-			status_emoji: '',
-			status_expiration: '',
-		},
-	} );
+	const userConfig = await getUserConfig();
+	// If a default status is set, use it instead of clearing the status
+	if ( userConfig.workspaces[ workspace ].defaultStatus ) {
+		await setStatus( {
+			workspace: workspace,
+			text: userConfig.workspaces[ workspace ].defaultStatus.text,
+			emoji: userConfig.workspaces[ workspace ].defaultStatus.emoji,
+			expiration: 'never',
+		} );
+	} else {
+		await app.client.users.profile.set( {
+			token: creds.token,
+			profile: {
+				status_text: '',
+				status_emoji: '',
+				status_expiration: '',
+			},
+		} );
+	}
 }
 
 async function setPresence( workspace, presence ) {
